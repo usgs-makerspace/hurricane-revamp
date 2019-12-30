@@ -3,6 +3,17 @@
 const hruTileUrl = [];
 hruTileUrl.push(process.env.VUE_APP_HRU_TILE_URL);
 
+var frameCount = 5;
+var currentImage = 0;
+ 
+function getPath() {
+    return (
+    'https://docs.mapbox.com/mapbox-gl-js/assets/radar' +
+    currentImage +
+    '.gif'
+    );
+}
+
 export default {
     style: {
         version: 8,
@@ -25,6 +36,17 @@ export default {
                 'minzoom': 0,
                 'maxzoom': 12,
                 'tileSize': 256
+            },
+            radar: {
+                type: 'image',
+                url: getPath(),
+                coordinates: [
+                    [-80.425, 46.437],
+                    [-71.516, 46.437],
+                    [-71.516, 37.936],
+                    [-80.425, 37.936]
+                ]
+
             }
         },
         'sprite': '',
@@ -1186,6 +1208,14 @@ export default {
                 'source-layer': 'place',
                 'type': 'symbol',
                 'showButtonLayerToggle': false
+            },
+            {
+            'id': 'radar-layer',
+                'type': 'raster',
+                'source': 'radar',
+                'paint': {
+                    'raster-fade-duration': 0
+                }
             }
         ]
     }

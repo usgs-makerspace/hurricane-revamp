@@ -139,6 +139,10 @@
                     }
                     map.on("zoomend", onZoomend);
                 }
+                setInterval(function() {
+                currentImage = (currentImage + 1) % frameCount;
+                map.getSource('radar').updateImage({ url: getPath() });
+                }, 200);
             }
         }
     };
