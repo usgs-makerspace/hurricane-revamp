@@ -139,13 +139,42 @@
                     }
                     map.on("zoomend", onZoomend);
                 }
+                var frameCount = 5;
+                var currentImage = 0;
+                
+                function getPath() {
+                  return (
+                    'https://docs.mapbox.com/mapbox-gl-js/assets/radar' +
+                    currentImage +
+                    '.gif'
+                  );
+                }
+                this.map.addSource('radar', {
+                type: 'image',
+                url: getPath(),
+                  coordinates: [
+                    [-80.425, 46.437],
+                    [-71.516, 46.437],
+                    [-71.516, 37.936],
+                    [-80.425, 37.936]
+                  ]
+                });
+                this.map.addLayer({
+                  id: 'radar-layer',
+                  'type': 'raster',
+                  'source': 'radar',
+                  'paint': {
+                  'raster-fade-duration': 0
+                  }
+                });
+                
                 setInterval(function() {
-                currentImage = (currentImage + 1) % frameCount;
-                map.getSource('radar').updateImage({ url: getPath() });
+                  currentImage = (currentImage + 1) % frameCount;
+                  map.getSource('radar').updateImage({ url: getPath() });
                 }, 200);
-            }
-        }
-    };
+                            }
+                        }
+                    };
 </script>
 
 <style scoped lang="scss">
