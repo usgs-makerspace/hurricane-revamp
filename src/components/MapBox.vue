@@ -116,29 +116,21 @@
            this.map = null;
         },
         methods: {
+            addZoomLevelIndicator() {
+                document.getElementById("zoom-level-div").innerHTML = 'Current Zoom Level (listed for development purposes): ' + this.map.getZoom() ;
+            },
+
             onMapLoaded(event) {
                 this.map = event.map; // This gives us access to the map as an object but only after the map has loaded.
-                this.map.resize(); //This solves the mysterious whitespace that was appeared above the footer, but was caused by the 'official' banner at the top.
-                this.map.touchZoomRotate.enable({ around: 'center' }); // pinch to zoom for touch devices
-                this.map.touchZoomRotate.disableRotation(); // disable the rotation functionality, but keep pinch to zoom
+                this.map.resize(); // This cures the mysterious whitespace that appears above the footer is was caused by the 'official' banner at the top.
+                this.map.touchZoomRotate.enable({ around: 'center' }); // Add pinch to zoom for touch devices.
+                this.map.touchZoomRotate.disableRotation(); // Disable the rotation functionality, but keep pinch to zoom.
                 this.map.fitBounds([[-125.3321, 23.8991], [-65.7421, 49.4325]]); // Once map is loaded, zoom in a bit more so that the map neatly fills the screen.
-                this.$store.map = event.map; // add the map to the Vuex store so that we can use it in other components
-
-                //set timeout to make sure the fitbounds is completely done before fade away of loading screen
-                setTimeout(() => {
-                    this.isLoading = false;
-                }, 200);
-
-                // Next section adds the current zoom level display to the map for development purposes.
-                // The zoom level display should only show in 'development' versions of the application
-                let map = this.map;
-                if (process.env.VUE_APP_ADD_ZOOM_LEVEL_DISPLAY && process.env.VUE_APP_ADD_ZOOM_LEVEL_DISPLAY === 'true') {
-                    function onZoomend() {
-                        let currentZoom = map.getZoom();
-                        document.getElementById("zoom-level-div").innerHTML = 'Current Zoom Level (listed for development purposes): ' + currentZoom ;
-                    }
-                    map.on("zoomend", onZoomend);
-                }
+                this.$store.map = event.map; // Add the map to the Vuex store so that we can use it in other components.
+                // Pause the code here to make sure the fitbounds has time to finish before fade away of loading screen.
+                setTimeout(() => { this.isLoading = false; }, 200);
+                // Next line adds the current zoom level display. The zoom level should only show in 'development' versions of the application.
+                process.env.VUE_APP_ADD_ZOOM_LEVEL_DISPLAY === 'true' ? this.map.on("zoomend", this.addZoomLevelIndicator) : null
             }
         }
     };
