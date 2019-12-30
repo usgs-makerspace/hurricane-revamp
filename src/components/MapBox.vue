@@ -164,7 +164,7 @@
                   'type': 'raster',
                   'source': 'radar',
                   'paint': {
-                  'raster-fade-duration': 0
+                      'raster-fade-duration': 0
                   }
                 });
                 
@@ -172,9 +172,9 @@
                   currentImage = (currentImage + 1) % frameCount;
                   map.getSource('radar').updateImage({ url: getPath() });
                 }, 200);
-                            }
-                        }
-                    };
+            }
+        }
+    };
 </script>
 
 <style scoped lang="scss">
