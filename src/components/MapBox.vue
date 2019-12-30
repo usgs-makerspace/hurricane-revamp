@@ -57,12 +57,16 @@
     <!--The next div contains information to show the current zoom level of the map. This will only show on the
           development version of the application. To find the code controlling this, search for 'zoom level display' -->
     <div id="zoom-level-div" />
+    <button id='fly'>Fly</button>
+    <div id="coords"></div>
   </div>
 </template>
 <script>
     import LoadingScreen from './LoadingScreen';
     import InternetExplorerPage from "./InternetExplorerPage";
     import QuestionControl from "./QuestionControl";
+    import mariaTrackGeoJSON from "../assets/hurricaneTracks/2017_maria";
+    import michaelTrackGeoJSON from "../assets/hurricaneTracks/2018_michael";
 
     import {
         MglMap,
@@ -113,12 +117,20 @@
             };
         },
         created() {
-           this.map = null;
+           this.map = null; // Once the map is loaded, this will allow us to access the map object in other methods
         },
         methods: {
             addZoomLevelIndicator() {
                 document.getElementById("zoom-level-div").innerHTML = 'Current Zoom Level (listed for development purposes): ' + this.map.getZoom() ;
             },
+            addHurricanePathToMap(hurricaneTrackGeoJSON) {
+                console.log('this is hurricane track ', hurricaneTrackGeoJSON)
+                this.map.addSource("michaelTrackGeoJSON", {
+                    "type": "geojson",
+                    "data": hurricaneTrackGeoJSON
+                });
+            },
+
 
             onMapLoaded(event) {
                 this.map = event.map; // This gives us access to the map as an object but only after the map has loaded.
@@ -131,6 +143,34 @@
                 setTimeout(() => { this.isLoading = false; }, 200);
                 // Next line adds the current zoom level display. The zoom level should only show in 'development' versions of the application.
                 process.env.VUE_APP_ADD_ZOOM_LEVEL_DISPLAY === 'true' ? this.map.on("zoomend", this.addZoomLevelIndicator) : null
+
+
+                let hurricaneTrack = [];
+                michaelTrackGeoJSON.features.forEach(function(feature) {
+                    feature.geometry.coordinates.forEach(function (coordinateSet) {
+                        hurricaneTrack.push(coordinateSet)
+                    })
+                });
+                this.addHurricanePathToMap(michaelTrackGeoJSON);
+                this.map.addLayer({
+                    'id': 'hurricane track',
+                    'type': 'line',
+                    'source': 'michaelTrackGeoJSON',
+                    'layout': {
+                        'visibility': 'visible',
+                    },
+                    'paint': {
+                        'line-color': 'red',
+                        'line-width': {
+                            'base': 2.55,
+                            'stops': [
+                                [0, 4],
+                                [20, 8]
+                            ]
+                        }
+                    }
+                });
+
             }
         }
     };
