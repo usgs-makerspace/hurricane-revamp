@@ -124,7 +124,6 @@
                 document.getElementById("zoom-level-div").innerHTML = 'Current Zoom Level (listed for development purposes): ' + this.map.getZoom() ;
             },
             addHurricanePathToMap(hurricaneTrackGeoJSON) {
-                console.log('this is hurricane track ', hurricaneTrackGeoJSON)
                 this.map.addSource("michaelTrackGeoJSON", {
                     "type": "geojson",
                     "data": hurricaneTrackGeoJSON
@@ -146,12 +145,12 @@
 
 
                 let hurricaneTrack = [];
-                michaelTrackGeoJSON.features.forEach(function(feature) {
+                michaelTrackGeoJSON.michaelData.features.forEach(function(feature) {
                     feature.geometry.coordinates.forEach(function (coordinateSet) {
                         hurricaneTrack.push(coordinateSet)
                     })
                 });
-                this.addHurricanePathToMap(michaelTrackGeoJSON);
+                this.addHurricanePathToMap(michaelTrackGeoJSON.michaelData);
                 this.map.addLayer({
                     'id': 'hurricane track',
                     'type': 'line',
