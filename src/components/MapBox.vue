@@ -129,8 +129,6 @@
                     "data": hurricaneTrackGeoJSON
                 });
             },
-
-
             onMapLoaded(event) {
                 this.map = event.map; // This gives us access to the map as an object but only after the map has loaded.
                 this.map.resize(); // This cures the mysterious whitespace that appears above the footer is was caused by the 'official' banner at the top.
@@ -140,18 +138,17 @@
                 this.$store.map = event.map; // Add the map to the Vuex store so that we can use it in other components.
                 // Pause the code here to make sure the fitbounds has time to finish before fade away of loading screen.
                 setTimeout(() => { this.isLoading = false; }, 200);
-                // Next line adds the current zoom level display. The zoom level should only show in 'development' versions of the application.
-                process.env.VUE_APP_ADD_ZOOM_LEVEL_DISPLAY === 'true' ? this.map.on("zoomend", this.addZoomLevelIndicator) : null
+                // Add the current zoom level display. The zoom level should only show in 'development' versions of the application.
+                process.env.VUE_APP_ADD_ZOOM_LEVEL_DISPLAY === 'true' ? this.map.on("zoomend", this.addZoomLevelIndicator) : null;
 
 
                 let hurricaneTrack = [];
                 michaelTrackGeoJSON.michaelData.features.forEach(function(feature) {
                     feature.geometry.coordinates.forEach(function (coordinateSet) {
                         hurricaneTrack.push(coordinateSet)
-                    })
+                    });
                 });
-                this.addHurricanePathToMap(michaelTrackGeoJSON.michaelData);
-                this.map.addLayer({
+                const layerStyle = {
                     'id': 'hurricane track',
                     'type': 'line',
                     'source': 'michaelTrackGeoJSON',
@@ -168,7 +165,59 @@
                             ]
                         }
                     }
+                };
+                this.addHurricanePathToMap(michaelTrackGeoJSON.michaelData);
+                this.map.addLayer(layerStyle);
+                const degreesToRadians = function(degrees) {
+                    return degrees * Math.PI / 180;
+                }
+                const distanceInKmBetweenEarthCoordinates = function(lat1, lon1, lat2, lon2) {
+                    let earthRadiusKm = 6371;
+                    let dLat = degreesToRadians(lat2-lat1);
+                    let dLon = degreesToRadians(lon2-lon1);
+                    lat1 = degreesToRadians(lat1);
+                    lat2 = degreesToRadians(lat2);
+                    let a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                            Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2);
+                    let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                    return earthRadiusKm * c;
+                }
+                let coorDiv = document.getElementById("coords");
+                let map = this.map;
+                document.getElementById('fly').addEventListener('click', function () {
+                    let i = 0;
+                    let mapDistance = null;
+                    let distanceAdjustmentMultiplyer = 1;
+                    let baseDurationOfFlyToAction = 1000;
+                    let intervalId = setInterval(function(){
+                        if(i === hurricaneTrack.length - 1){
+                            clearInterval(intervalId);
+                        }
+                        coorDiv.innerHTML = 'the current coordinates ' + hurricaneTrack[i][0] + ', ' + hurricaneTrack[i][1]
+                        if (i < hurricaneTrack.length - 1) {
+                            mapDistance = distanceInKmBetweenEarthCoordinates(hurricaneTrack[i][0], hurricaneTrack[i][1], hurricaneTrack[i+1][0], hurricaneTrack[i+1][1]);
+                        }
+                        if (mapDistance != 0) {
+                            distanceAdjustmentMultiplyer = baseDurationOfFlyToAction/mapDistance;
+                            console.log('this is the multiplier ', distanceAdjustmentMultiplyer)
+                        }
+                        coorDiv.innerHTML = 'the current coordinates are ' + hurricaneTrack[i][0] + ', ' + hurricaneTrack[i][1] + ', and the distance between is ' + mapDistance + ' kilometers.'
+
+                        map.flyTo({
+                            center: [hurricaneTrack[i][0], hurricaneTrack[i][1]],
+                            zoom: 7,
+                            bearing: 0,
+                            speed: 0.12, // make the flying slow
+                            curve: 1, // change the speed at which it zooms out
+                        });
+
+                        i++;
+                        console.log('duration ' + baseDurationOfFlyToAction/distanceAdjustmentMultiplyer)
+                        // }, baseDurationOfFlyToAction * distanceAdjustmentMultiplyer);
+                    }, baseDurationOfFlyToAction);
                 });
+
+
 
             }
         }
