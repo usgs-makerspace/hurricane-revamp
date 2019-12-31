@@ -143,20 +143,16 @@
                 var currentImage = 0;
                 
                 function getPath() {
-                  return (
-                    'https://docs.mapbox.com/mapbox-gl-js/assets/radar' +
-                    currentImage +
-                    '.gif'
-                  );
+                  return require('../images/radar/n0r-t'+currentImage+'.png') 
                 }
                 this.map.addSource('radar', {
                 type: 'image',
                 url: getPath(),
                   coordinates: [
-                    [-80.425, 46.437],
-                    [-71.516, 46.437],
-                    [-71.516, 37.936],
-                    [-80.425, 37.936]
+                    [-65, 48], //top left
+                    [-93, 48], //top right
+                    [-65, 24], //bottom right
+                    [-93, 24] //bottom left
                   ]
                 });
                 this.map.addLayer({
