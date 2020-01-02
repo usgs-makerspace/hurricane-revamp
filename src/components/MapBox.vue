@@ -280,11 +280,11 @@
 
                 this.addHurricanePathToMap(michaelTrackGeoJSON.michaelData);
                 this.map.addLayer(this.getHurricaneTrackStyle());
-                var frameCount = 6;
+                var frameCount = 53;
                 var currentImage = 0;
                 
                 function getPath() {
-                  return require('../images/radar/n0r-t'+currentImage+'.png') 
+                  return require('../images/radar/michael'+currentImage+'.png') 
                 }
                 this.map.addSource('radar', {
                 type: 'image',
