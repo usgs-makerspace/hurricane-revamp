@@ -304,7 +304,7 @@
                       'raster-fade-duration': 0
                   }
                 });
-                
+                let map = this.map;
                 setInterval(function() {
                   currentImage = (currentImage + 1) % frameCount;
                   map.getSource('radar').updateImage({ url: getPath() });
