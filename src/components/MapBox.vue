@@ -280,6 +280,35 @@
 
                 this.addHurricanePathToMap(michaelTrackGeoJSON.michaelData);
                 this.map.addLayer(this.getHurricaneTrackStyle());
+                var frameCount = 6;
+                var currentImage = 0;
+                
+                function getPath() {
+                  return require('../images/radar/n0r-t'+currentImage+'.png') 
+                }
+                this.map.addSource('radar', {
+                type: 'image',
+                url: getPath(),
+                  coordinates: [
+                    [-93.8671875, 48.6909603], //top left
+                    [-65.7421875, 48.6909603], //top right
+                    [-65.7421875, 25.0059728], //bottom right
+                    [-93.8671875, 25.0059728]  //bottom left
+                  ]
+                });
+                this.map.addLayer({
+                  id: 'radar-layer',
+                  'type': 'raster',
+                  'source': 'radar',
+                  'paint': {
+                      'raster-fade-duration': 0
+                  }
+                });
+                
+                setInterval(function() {
+                  currentImage = (currentImage + 1) % frameCount;
+                  map.getSource('radar').updateImage({ url: getPath() });
+                }, 200);
             }
         }
     };
