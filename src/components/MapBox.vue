@@ -139,7 +139,7 @@
                     }
                     map.on("zoomend", onZoomend);
                 }
-                var frameCount = 5;
+                var frameCount = 6;
                 var currentImage = 0;
                 
                 function getPath() {
@@ -149,10 +149,10 @@
                 type: 'image',
                 url: getPath(),
                   coordinates: [
-                    [-65, 48], //top left
-                    [-93, 48], //top right
-                    [-65, 24], //bottom right
-                    [-93, 24] //bottom left
+                    [-93.8671875, 48.6909603], //top left
+                    [-65.7421875, 48.6909603], //top right
+                    [-65.7421875, 25.0059728], //bottom right
+                    [-93.8671875, 25.0059728]  //bottom left
                   ]
                 });
                 this.map.addLayer({
