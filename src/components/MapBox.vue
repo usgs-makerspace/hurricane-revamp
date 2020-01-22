@@ -280,7 +280,7 @@
 
                 this.addHurricanePathToMap(michaelTrackGeoJSON.michaelData);
                 this.map.addLayer(this.getHurricaneTrackStyle());
-                var frameCount = 53;
+                var frameCount = 73;
                 var currentImage = 0;
                 
                 function getPath() {
